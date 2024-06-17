@@ -17,8 +17,9 @@ render = () => {
                              <input type="checkbox">
                         </label>
                         <div class="todo__task-title"> ${taskText}</div>
-                     </li>`   });
- taskList.innerHTML = taskHTML
+                     </li>`   }
+ todoList.innerHTML = taskHTML
+);
 
 }
 
