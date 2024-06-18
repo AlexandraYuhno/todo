@@ -1,6 +1,7 @@
-const newInput = document.getElementById('newInput');  //поле ввода
-const btnAdd = document.getElementById('btnAdd'); //кнопка добавить
-const taskList = document.getElementById('taskList'); //список задач ul
+const newInput = document.getElementById('newInput');  //entry field
+const btnAdd = document.getElementById('btnAdd'); //add button
+const taskList = document.getElementById('taskList'); //task list ul
+
 
 let todoList = [];
 
@@ -11,18 +12,18 @@ function taskRender(){
     
     let taskHTML =""
     todoList.forEach(function(item){
-      taskHTML += ` <li class="todo__task">
-                        <label class="todo__checkbox" for = id "item_${item.id}" checked = ${item.isCompleted}> 
-                             <input type="checkbox" id= "item_${item.id}">
+      taskHTML += ` <li class="todo__task" >
+                        <label class="todo__checkbox"  checked = ${item.isCompleted}> 
+                             <input type="checkbox" data-id="${item.id}" >
                         </label>
                         <div class="todo__task-title"> ${item.text}</div>
                      </li>`   ;
         taskList.innerHTML = taskHTML;
     }
-)}
+)
+}
 
 //Track click button 'Add'
-
 btnAdd.addEventListener("click", function addTask(){
    
     let newTodo = {
@@ -34,6 +35,21 @@ btnAdd.addEventListener("click", function addTask(){
     taskRender()
 });
 
-/*todoList.filter(function(item){
-const checked = newTodo.isCompleted ? 'checked' : '';
-})*/
+taskList.addEventListener("click", function checkDone(event){
+    const element = event.target;
+    const checkedId = element.getAttribute('data-id');
+    const activeTask = todoList.find((item) => item.id === checkedId);
+
+    
+
+   /* const state = element.getAttribute('data-checked');
+    if(state){
+        state.checked
+    } else { ""
+        };*/
+    console.log(activeTask)
+    console.log(checkedId)
+   taskRender()
+})
+    
+
