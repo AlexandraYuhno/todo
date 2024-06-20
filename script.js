@@ -1,32 +1,51 @@
-const newInput = document.getElementById('newInput');
+const newInput = document.getElementById('newInput');  
 const btnAdd = document.getElementById('btnAdd');
-const taskList =document.getElementById('taskList');
+const taskList = document.getElementById('taskList');
 
 let todoList = [];
 
-//Track click button 'Add'
 
+// Drawing a new task in the task list
 
-function showTasks(){ 
+let taskRender = () =>{ 
     
     let taskHTML =""
-    todoList.forEach(function(item, i){
-      taskHTML += ` <li class="todo__task">
+    todoList.forEach((item, i) => {
+      taskHTML += `<li class="todo__task">
                         <label class="todo__checkbox"> 
-                             <input type="checkbox" id= "item_${i}">
-                        </label for = 'id= "item_${i}">
+                             <input type="checkbox" data-id="${item.id}" ${item.isCompleted ? "checked" : ""} >
+                        </label >
                         <div class="todo__task-title"> ${item.text}</div>
-                     </li>`   ;
+                    </li>`   ;
         taskList.innerHTML = taskHTML;
     }
 )}
 
+//Track click button 'Add'
 
-btnAdd.addEventListener("click", function addTask(){
+btnAdd.addEventListener("click", addTask = () =>{
     let newTodo = {
+        id: Date.now(),
         text: newInput.value,
         isCompleted:false,
         };
     todoList.push(newTodo);
-    showTasks()
+    taskRender()
 });
+
+
+// Сhanging the state of the task
+
+taskList.addEventListener("click", checkDone = (event) => {
+   
+    const element = event.target;
+    const activeTaskId = element.getAttribute('data-id');
+    const checkedId = Number(activeTaskId);
+    const taskClick = todoList.find((item) => item.id == checkedId);
+    taskClick.isCompleted = !taskClick.isCompleted;
+    taskRender()
+}
+)
+    
+
+
