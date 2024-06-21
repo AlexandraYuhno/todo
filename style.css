@@ -10,8 +10,15 @@ body{
     padding: 32px;
 }
 
+.todo__title{
+    margin-bottom: 20px;
+    text-align: center;
+}
+
 .todo{
     padding: 32px;
+    background-color: #fff;
+    border: 1px solid #000;
 }
 
 .todo__new{
@@ -24,6 +31,7 @@ body{
     cursor: pointer;
 }
 
+
 .todo__task {
     cursor: default;
     display: flex;
@@ -31,4 +39,8 @@ body{
     background-color: #F5DCFF;
     border-radius: 5px;
     margin-bottom: 10px;
+}
+
+.todo__list{
+    padding: 0;
 }
