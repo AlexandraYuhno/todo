@@ -5,10 +5,12 @@ const taskList = document.getElementById('taskList');
 
 let todoList = [{id: Date.now(),
     text: "Задача 1",
-    isCompleted:true,},
+    isCompleted:true,
+    isEdit: false},
     {id: Date.now() + 3,
     text: "Задача 2",
-    isCompleted:false,} 
+    isCompleted:false,
+    isEdit: false} 
  ]  ;
 
 
@@ -18,66 +20,69 @@ let taskRender = () =>{
     
     let taskHTML =""
     todoList.forEach((item) => {
-        taskHTML +=`<li class="todo__task" data-type = "${item.isEdit}">
+        taskHTML +=`<li class="todo__task" data-id="${item.id}">
             <label class="todo__checkbox"> 
-                <input type="checkbox" data-id="${item.id} data-action = "check"
+                <input data-active="checkbox" type="checkbox" class="checkbox"
                 ${item.isCompleted ? "checked" : ""} >
             </label >
-            <input type="text" id='editText' ${item.isEdit}>
-            <div class="todo__task-title" data-action = "edit">${item.text}</div>
+            <input value="${item.text}" type="text" class='editText' ${!item.isEdit ? 'hidden' : "" }>
+            <div class="todo__task-title" ${item.isEdit ? 'hidden' : ""}>${item.text}</div>
          </li>`;
 
         taskList.innerHTML = taskHTML;
-    }
-
-)}
-
+    })
+}
 
 // Add task  /*  <input type="text" ${item.text}>
 
-let addTask= () =>{
+let addTask= () => {
     let newTodo = {
         id: Date.now(),
         text: newInput.value,
         isCompleted: false,
-        isEdit: true,
+        isEdit: false,
         };
     todoList.push(newTodo);
-    taskRender()}
+    taskRender()
+}
 
 
 // Сhanging the state of the task
-  let checkDone = (event) => {
-        const element = event.target;
-        const activeTaskId = element.getAttribute('data-id');
-        const checkedId = Number(activeTaskId);
-        const taskClick = todoList.find((item) => item.id == checkedId);
-        taskClick.isCompleted = !taskClick.isCompleted;
-         
+
+let checkDone = (event) => {
+    const element = event.target.closest('.todo__task');
+    const activeTaskId = element.getAttribute('data-id');
+    const checkedId = Number(activeTaskId);
+    const taskClick = todoList.find((item) => item.id == checkedId);
+    taskClick.isCompleted = !taskClick.isCompleted;
+
+    /*const activeCheckbox = checkboxClick.getAttribute('data-active');
+    const checkboxClick = element.querySelector('.todo__checkbox .checkbox');
+    if(activeCheckbox == "checkbox"){
         
-        taskRender()
-    }
+    }*/
+    taskRender()
+}
 
 
 
 //Editing a task
 
 let editTask = (event) => {  
-    let listTask = event.target.closest('.todo__task');
-    const text = listTask.querySelector('.todo__task-title')
-    /*let action = event.target.dataset.action;*/
-    const editText = document.getElementById('editText');
-    editText.value = text.textContent; 
-    editText.isEdit = true; 
-    console.log(editText.isEdit)
-    /*if(event.key === 'Enter') {
-        alert(editText.value);}*/
-    
+    const element = event.target.closest('.todo__task');
+    const editTask = element.getAttribute('data-id');
+    const editId = Number(editTask);
+    const editText = todoList.find((item) => item.id == editId);
+    editText.isEdit = true;
+    let editInput = element.querySelector('.editText').value;
+    editText.text = editInput;
+    if(event.key == 13) {  
+    /*todoList =  todoList.map((item)=> item.text = editInput )*/
+    /*console.log(editInput);*} else if (event.key == 27){*/ }
+    taskRender()
 }
 
 
 taskList.addEventListener("dblclick", editTask);
 btnAdd.addEventListener("click", addTask);
 taskList.addEventListener("click", checkDone);
-
- 
