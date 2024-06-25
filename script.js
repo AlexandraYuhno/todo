@@ -6,11 +6,11 @@ const taskList = document.getElementById('taskList');
 let todoList = [{id: Date.now(),
     text: "Задача 1",
     isCompleted:true,
-    isEdit: false},
+    },
     {id: Date.now() + 3,
     text: "Задача 2",
     isCompleted:false,
-    isEdit: false} 
+    } 
  ]  ;
 
 
@@ -25,8 +25,8 @@ let taskRender = () =>{
                 <input data-active="checkbox" type="checkbox" class="checkbox"
                 ${item.isCompleted ? "checked" : ""} >
             </label >
-            <input value="${item.text}" type="text" class='editText' ${!item.isEdit ? 'hidden' : "" }>
-            <div class="todo__task-title" ${item.isEdit ? 'hidden' : ""}>${item.text}</div>
+            <input value="${item.text}" type="text" class='editText' hidden>
+            <div class="todo__task-title">${item.text}</div>
          </li>`;
 
         taskList.innerHTML = taskHTML;
@@ -40,7 +40,6 @@ let addTask= () => {
         id: Date.now(),
         text: newInput.value,
         isCompleted: false,
-        isEdit: false,
         };
     todoList.push(newTodo);
     taskRender()
@@ -49,7 +48,7 @@ let addTask= () => {
 
 // Сhanging the state of the task
 
-let checkDone = (event) => {
+/*let checkDone = (event) => {
     const element = event.target.closest('.todo__task');
     const activeTaskId = element.getAttribute('data-id');
     const checkedId = Number(activeTaskId);
@@ -60,29 +59,48 @@ let checkDone = (event) => {
     const checkboxClick = element.querySelector('.todo__checkbox .checkbox');
     if(activeCheckbox == "checkbox"){
         
-    }*/
+    }
     taskRender()
-}
+}*/
 
-
-
+// Saving with enter and blur, undoing changes with escape
 //Editing a task
 
 let editTask = (event) => {  
     const element = event.target.closest('.todo__task');
-    const editTask = element.getAttribute('data-id');
-    const editId = Number(editTask);
-    const editText = todoList.find((item) => item.id == editId);
-    editText.isEdit = true;
-    let editInput = element.querySelector('.editText').value;
-    editText.text = editInput;
-    if(event.key == 13) {  
-    /*todoList =  todoList.map((item)=> item.text = editInput )*/
-    /*console.log(editInput);*} else if (event.key == 27){*/ }
-    taskRender()
+    const inputSave = element.querySelector('.editText');
+    const taskTitle = element.querySelector('.todo__task-title');
+    inputSave.hidden = false;
+    taskTitle.hidden = true; 
+    
+   inputSave.addEventListener('keydown', function pressKey(event){
+        if( event.code == 'Enter'  ) {  
+            const editTask = element.getAttribute('data-id');
+            const editId = Number(editTask);
+            const editText = todoList.find((item) => item.id == editId);
+            let editInput = element.querySelector('.editText').value;
+            editText.text = editInput;
+            inputSave.removeEventListener('keydown', pressKey);
+            taskRender()
+        } else if (event.keyCode == 27){
+                inputSave.hidden = true;
+                taskTitle.hidden = false;
+                inputSave.removeEventListener('keydown', pressKey);
+                taskRender() 
+        }
+    })
+   
+    inputSave.addEventListener('blur', function blurOn(){
+        const editTask = element.getAttribute('data-id');
+            const editId = Number(editTask);
+            const editText = todoList.find((item) => item.id == editId);
+            let editInput = element.querySelector('.editText').value;
+            editText.text = editInput;
+        inputSave.removeEventListener('keydown', blurOn);
+        taskRender()
+   })
 }
-
 
 taskList.addEventListener("dblclick", editTask);
 btnAdd.addEventListener("click", addTask);
-taskList.addEventListener("click", checkDone);
+/*taskList.addEventListener("click", checkDone);*/
