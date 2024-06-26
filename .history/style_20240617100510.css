@@ -1,0 +1,15 @@
+*{
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body{
+    background-color: #ffb3d5;
+    display: flex;
+    justify-content: center;
+    padding: 32px;
+}
+
+.todo__new{
+
+}
