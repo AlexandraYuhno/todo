@@ -1,1 +1,7 @@
 VSCode.install-packages.sh
+node_modules/
+eslint.config.mjs
+package-lock.js
+package.json
+package-lock.json
+.history/

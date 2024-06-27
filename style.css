@@ -1,46 +1,79 @@
 *{
-    margin: 0;
-    box-sizing: border-box;
+  margin: 0;
+  box-sizing: border-box;
 }
 
 body{
-    background-color: #ffb3d5;
-    display: flex;
-    justify-content: center;
-    padding: 32px;
+  background-color: #ffb3d5;
+  display: flex;
+  justify-content: center;
+  padding: 32px;
 }
 
 .todo__title{
-    margin-bottom: 20px;
-    text-align: center;
+  margin-bottom: 20px;
+  text-align: center;
 }
 
 .todo{
-    padding: 32px;
-    background-color: #fff;
-    border: 1px solid #000;
+  padding: 32px;
+  background-color: #fff;
+  border: 1px solid #000;
 }
 
 .todo__new{
-    display: flex;
-    padding: 16px 0 32px;
+  display: flex;
+  padding: 16px 0 32px;
 }
 
 .todo__add{
-    margin-left: 32px;
-    cursor: pointer;
+  margin-left: 32px;
+  cursor: pointer;
 }
 
 
 .todo__task {
-    cursor: default;
-    display: flex;
-    align-items: center;
-    background-color: #F5DCFF;
-    border-radius: 5px;
-    margin-bottom: 10px;
+  cursor: default;
+  display: flex;
+  align-items: center;
+  background-color: #F5DCFF;
+  border-radius: 5px;
+  margin-bottom: 10px;
 }
 
 .todo__list{
-    padding: 0;
+  padding: 0;
+  margin-bottom: 20px;
+}
+
+.todo__task-del {
+  width: var(--size);
+  height: var(--size);
+  line-height: var(--size);
+  border: 1px solid #E2E2E2;
+  text-align: center;
+  font-size: 20 px;
+  border-radius: 12px;
+  color: #fff;
+  cursor: pointer;
+  --size: 30px;
+  margin-left: auto;
+  margin-right: 0;
+  border-radius: 5px;
+  font-size: 20px;
+  background-color: #AB235D;
+  line-height: cal(var(--size)*0.88);}
+
+.todo__del-all{
+  margin-top: 20px;
+  cursor: pointer;
+  background-color: #AB235D;
+  color: #fff;
+  font-size: 14px;
+  border-radius: 5px;
+  margin-left: auto;
+  margin-right: 0;
+  position: relative;
+  left: 50%;
+  transform: translate(-50%, 0);
 }
