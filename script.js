@@ -58,20 +58,22 @@ let addByEnter = (event) => {
 
 // Сhanging the state of the task
 
+let checkAllTodo = (event) => {
+  todoList.forEach((item) => item.isCompleted = event.target.checked);
+  taskRender()
+}
+
 let checkDone = (event) => {
   const activeTaskId = event.target.closest(".todo__task").getAttribute("data-id");
   const taskClick = todoList.find((item) => item.id === Number(activeTaskId));
   taskClick.isCompleted = !taskClick.isCompleted;
+  if(todoList.every((item) => item.isCompleted === true)){
+    checkAll.checked = true;
+  }else {
+    checkAll.checked = false;
+  }
   taskRender();
 };
-
-let checkAllTodo = (event) => {
-  let checked = event.target.checked;
-  todoList.forEach((item) => {item.isCompleted = checked});
-  /*if(todoList.find((item) => item.isCompleted !== true)){
-    checked = false} else if(){}*/
-  taskRender()
-}
 
 // Adding a delete button
 
