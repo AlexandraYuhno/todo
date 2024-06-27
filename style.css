@@ -77,3 +77,14 @@ body{
   left: 50%;
   transform: translate(-50%, 0);
 }
+
+.todo__checkAll{
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+  background-color: #F5DCFF;
+}
+
+.todo__checkAll_checkbox{
+  margin-left: 32px;
+}

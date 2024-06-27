@@ -2,6 +2,7 @@ const newInput = document.getElementById("newInput"); //entry field
 const btnAdd = document.getElementById("btnAdd"); //add button
 const taskList = document.getElementById("taskList"); //task list ul
 const btnDelAll = document.getElementById("btnDelAll"); //del button
+const checkAll = document.getElementById('checkAll');
 
 // Displaying the added task in the task list
 
@@ -64,22 +65,26 @@ let checkDone = (event) => {
   taskRender();
 };
 
+let checkAllTodo = (event) => {
+  let checked = event.target.checked;
+  todoList.forEach((item) => {item.isCompleted = checked});
+  /*if(todoList.find((item) => item.isCompleted !== true)){
+    checked = false} else if(){}*/
+  taskRender()
+}
+
 // Adding a delete button
 
-let deleteTask = (event) =>{
+let deleteTask = (event) => {
   const activeTaskId = event.target.closest(".todo__task").getAttribute('data-id');
-  todoList = todoList.filter((item) => {
-    return Number(activeTaskId) !== item.id;
-  })
+  todoList = todoList.filter((item) => Number(activeTaskId) !== item.id)
   taskRender();
 };
 
 //Delete all completed tasks 
 
-let DelAll = () => {
-  todoList = todoList.filter((item) => {
-    return item.isCompleted !== true;
-  })
+let delAll = () => {
+  todoList = todoList.filter((item) => !item.isCompleted)
   taskRender();
 };
 
@@ -88,6 +93,7 @@ let DelAll = () => {
 let switchClick = (event) => {
   const element = event.target.closest(".todo__task");
   const liLabel = element.childNodes[1];
+  
   if (event.target === liLabel.childNodes[1]) {
     checkDone(event);
   } else if (event.target === element.childNodes[7]){
@@ -136,4 +142,5 @@ taskList.addEventListener("click", switchClick);
 taskList.addEventListener("dblclick", switchDblClick);
 newInput.addEventListener("keydown", addByEnter);
 btnAdd.addEventListener("click", addTask);
-btnDelAll.addEventListener("click", DelAll);
+btnDelAll.addEventListener("click", delAll);
+checkAll.addEventListener("click", checkAllTodo);
