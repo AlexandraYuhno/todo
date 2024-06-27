@@ -19,7 +19,7 @@ let todoList = [{id: Date.now(),
 
 let taskRender = () =>{ 
     
-    let taskHTML =""
+    let taskHTML = " "
     todoList.forEach((item) => {
         taskHTML +=`<li class="todo__task" data-id="${item.id}">
             <label class="todo__checkbox"> 
@@ -31,13 +31,13 @@ let taskRender = () =>{
          </li>`;
 
         taskList.innerHTML = taskHTML;
-       
+        newInput.value = "";
     })
 }
 
 // Add task 
 
-let addTask= () => {
+let addTask = () => {
     let newTodo = {
         id: Date.now(),
         text: newInput.value,
@@ -45,6 +45,18 @@ let addTask= () => {
         };
     todoList.push(newTodo);
     taskRender()
+}
+
+let addByEnter = (event) => {
+    if(event.code == 'Enter') {
+        let newTodo = {
+            id: Date.now(),
+            text: newInput.value,
+            isCompleted: false,
+            };
+        todoList.push(newTodo);
+        taskRender()
+    }
 }
 
 // Сhanging the state of the task
@@ -58,6 +70,7 @@ let checkDone = (event) => {
     taskRender()
 }
 
+
 let switchClick= (event) => {
     const element = event.target.closest('.todo__task');
     const liLabel = element.childNodes[1];
@@ -70,12 +83,10 @@ let switchClick= (event) => {
 
 let switchDblClick = (event) => {
     const element = event.target.closest('.todo__task');
-    const inputSave = element.childNodes[3];
-    const taskTitle = element.childNodes[5];      
-    if(event.target == element.childNodes[5]){
-        inputSave.hidden = false;
-        taskTitle.hidden = true; 
-    }
+    element.childNodes[3].hidden = false;
+    element.childNodes[5].hidden = true;
+    element.childNodes[3].focus();
+
 }
 
 // Saving with enter and blur, undoing changes with escape
@@ -87,15 +98,12 @@ let pressKey = (event) =>{
     if(event.target == inputSave){
         if(event.code == 'Enter') {  
             const editTask = element.getAttribute('data-id');
+            console.log(editTask);
             const editId = Number(editTask);
             const editText = todoList.find((item) => item.id == editId);
             editText.text = inputSave.value;
-            taskList.removeEventListener('keydown', pressKey);
             taskRender()
         } else if (event.keyCode == 27){
-            inputSave.hidden = true;
-            taskTitle.hidden = false;
-            taskList.removeEventListener('keydown', pressKey);
             taskRender() 
         }
     }
@@ -110,7 +118,6 @@ let blurOn = (event)=>{
         const editId = Number(editTask);
         const editText = todoList.find((item) => item.id == editId);
         editText.text = inputSave.value;
-        taskList.removeEventListener('blur', blurOn);
         taskRender()
     }
 }
@@ -119,4 +126,5 @@ taskList.addEventListener('keydown', pressKey);
 taskList.addEventListener('blur', blurOn);
 taskList.addEventListener("click", switchClick);
 taskList.addEventListener("dblclick", switchDblClick);
+newInput.addEventListener('keydown', addByEnter);
 btnAdd.addEventListener("click", addTask);
