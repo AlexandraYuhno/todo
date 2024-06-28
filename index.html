@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TodoJs</title>
-    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="./style.css">
 </head>
 <body>
     <div class="todo">
@@ -21,7 +21,12 @@
         </div>
         <ul class="todo__list" id="taskList"></ul> 
         <button class="todo__del-all" id="btnDelAll">Delete All Completed</button>
+        <div class="todo__show" id="todoShow">
+            <button class="todo__show_all" id="btnShowAll">All</button>
+            <button class="todo__show_active" id="btnShowActive">Active</button>
+            <button class="todo__show_complete" id="btnShowComplete">Complete</button>
+        </div>
     </div>
-    <script src="/script.js"></script>
+    <script src="./script.js"></script>
 </body>
 </html>

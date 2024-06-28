@@ -3,6 +3,7 @@ const btnAdd = document.getElementById("btnAdd"); //add button
 const taskList = document.getElementById("taskList"); //task list ul
 const btnDelAll = document.getElementById("btnDelAll"); //del button
 const checkAll = document.getElementById('checkAll');
+/*const todoShow = document.getElementById('todoShow');*/
 
 // Displaying the added task in the task list
 
@@ -30,6 +31,15 @@ let taskRender = () => {
   newInput.value = ""
 };
 
+let sumTodo = (event) =>{
+  let allTask = 0;
+  todoList.forEach(function(num){
+    allTask += num
+  })
+  return allTask;
+  
+}
+
 // Add task by click
 
 let addTask = () => {
@@ -56,7 +66,7 @@ let addByEnter = (event) => {
   }
 };
 
-// Сhanging the state of the task
+// Changing the state of each all todo and together
 
 let checkAllTodo = (event) => {
   todoList.forEach((item) => item.isCompleted = event.target.checked);
@@ -95,7 +105,6 @@ let delAll = () => {
 let switchClick = (event) => {
   const element = event.target.closest(".todo__task");
   const liLabel = element.childNodes[1];
-  
   if (event.target === liLabel.childNodes[1]) {
     checkDone(event);
   } else if (event.target === element.childNodes[7]){

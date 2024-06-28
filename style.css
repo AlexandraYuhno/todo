@@ -65,7 +65,7 @@ body{
   line-height: cal(var(--size)*0.88);}
 
 .todo__del-all{
-  margin-top: 20px;
+  margin: 20px 20px;
   cursor: pointer;
   background-color: #AB235D;
   color: #fff;
@@ -87,4 +87,12 @@ body{
 
 .todo__checkAll_checkbox{
   margin-left: 32px;
+}
+
+.todo__show{
+  display: flex;
+  justify-content: center;
+  align-content: stretch;
+  cursor: pointer;
+  background-color: #F5DCFF;
 }
