@@ -3,7 +3,12 @@ const btnAdd = document.getElementById("btnAdd"); //add button
 const taskList = document.getElementById("taskList"); //task list ul
 const btnDelAll = document.getElementById("btnDelAll"); //del button
 const checkAll = document.getElementById('checkAll');
-/*const todoShow = document.getElementById('todoShow');*/
+// const todoShow = document.getElementById('todoShow');
+const btnShowActive = document.getElementById('btnShowActive');
+const btnShowAll = document.getElementById('btnShowAll');
+const btnShowComplete = document.getElementById('btnShowComplete');
+
+
 
 // Displaying the added task in the task list
 
@@ -12,6 +17,11 @@ let todoList = [
   { id: Date.now() + 3, text: "Задача 2", isCompleted: false },
 ];
 
+let sumTodo = () =>{
+  btnShowAll.textContent = `All (${todoList.length})`;
+  btnShowActive.textContent = `Active (${todoList.filter((item) => item.isCompleted === false).length})`;
+  btnShowComplete.textContent = `Completed (${todoList.filter((item) => item.isCompleted === true).length})`;
+}
 // Drawing a new task in the task list
 
 let taskRender = () => {
@@ -29,16 +39,8 @@ let taskRender = () => {
   });
   taskList.innerHTML = taskHTML;
   newInput.value = ""
+  sumTodo()
 };
-
-let sumTodo = (event) =>{
-  let allTask = 0;
-  todoList.forEach(function(num){
-    allTask += num
-  })
-  return allTask;
-  
-}
 
 // Add task by click
 
@@ -155,3 +157,6 @@ newInput.addEventListener("keydown", addByEnter);
 btnAdd.addEventListener("click", addTask);
 btnDelAll.addEventListener("click", delAll);
 checkAll.addEventListener("click", checkAllTodo);
+// btnShowActive.addEventListener("click", activeShow);
+// btnShowComplete.addEventListener("click", completeShow);
+// btnShowAll.addEventListener("click", allShow);
