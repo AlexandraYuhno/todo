@@ -95,3 +95,24 @@ body{
   align-content: stretch;
   cursor: pointer;
 }
+
+.todo__pagination_btn{
+  margin: 10px 10px;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  background-color: #F5DCFF;
+  border: none;
+  cursor: pointer;
+  align-items: center;
+ }
+  
+.todo__paganation{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+  
+.active{
+  background-color: pink; 
+}

@@ -1,15 +1,17 @@
-const newInput = document.getElementById("newInput"); //entry field
-const btnAdd = document.getElementById("btnAdd"); //add button
-const taskList = document.getElementById("taskList"); //task list ul
-const btnDelAll = document.getElementById("btnDelAll"); //del button
+const newInput = document.getElementById("newInput");
+const btnAdd = document.getElementById("btnAdd");
+const taskList = document.getElementById("taskList");
+const btnDelAll = document.getElementById("btnDelAll");
 const checkAll = document.getElementById('checkAll');
 const btnShowActive = document.getElementById('btnShowActive');
 const btnShowAll = document.getElementById('btnShowAll');
 const btnShowComplete = document.getElementById('btnShowComplete');
 const todoShow = document.getElementById('todoShow');
+const todoPaganation = document.getElementById('todoPaganation');
 
 let tab = 'all'
-
+const itemsPerPage = 5;
+let currentPage = 1; 
 
 // Displaying the added task in the task list
 
@@ -18,56 +20,85 @@ let todoList = [
   { id: Date.now() + 3, text: "Задача 2", isCompleted: false },
 ];
 
-
 let sumTodo = () =>{
-  btnShowAll.textContent = `All (${todoList.length})`;
-  btnShowActive.textContent = `Active (${todoList.filter((item) => item.isCompleted === false).length})`;
-  btnShowComplete.textContent = `Completed (${todoList.filter((item) => item.isCompleted === true).length})`;
+  let countTodo = todoList.length;
+  let countTodoActive = todoList.filter((item) => item.isCompleted === false).length
+  btnShowAll.textContent = `All (${countTodo})`;
+  btnShowActive.textContent = `Active (${countTodoActive})`;
+  btnShowComplete.textContent = `Completed (${countTodo - countTodoActive})`;
 };
 
 const taskVisible = (event) => {
-  if(event.target === todoShow.childNodes[1]){
-    tab = 'all';
-  } else if (event.target === todoShow.childNodes[3]){
-    tab = 'active';
-  } else if  (event.target === todoShow.childNodes[5]){
-    tab = 'completed';
-  }
+  tab = event.target.getAttribute('data-id');
+  console.log(event.target)
+  if (event.target.getAttribute('data-id') === tab) {
+    event.target.classList.add('active');
+  } else {
+    event.target.classList.remove('active');
+  };
   taskRender()
 };
   
 let getList = () => {
-  switch(tab){
-  case 'all':
+  switch (tab) {
+  case "all":
     return todoList;
-  case 'active':
-    return todoList.filter((item)=> !item.isCompleted);
-  case 'completed':
-    
-    return todoList.filter((item)=> item.isCompleted);
+  case "active":
+    return todoList.filter((item) => !item.isCompleted);
+  case "completed":
+    return todoList.filter((item) => item.isCompleted);
   }
+};
+  
+//Pagination task
+  
+let showPage = (newTodoList) => {
+  const itemsStart = (currentPage - 1) * itemsPerPage;
+  const itemsEnd = itemsStart + itemsPerPage;
+  const pagTodoList = newTodoList.slice(itemsStart, itemsEnd); 
+  return pagTodoList;
+};
+  
+let crossPage = (event) => {
+  let page = event.target.getAttribute("data-page");
+  currentPage = Number(page);
+  taskRender()
+};
+  
+let pagRender = () => {
+  let addPageHTML =''
+  const pagesTotal = Math.ceil(todoList.length / itemsPerPage);
+  for (let i = 0; i < pagesTotal; i++) {
+    addPageHTML += `<button class="todo__pagination_btn ${currentPage === i+1 ? 
+      "active" : ""}" data-page="${i+1}">${i+1}</button>`;
+  }
+  todoPaganation.innerHTML = addPageHTML;
 }
 
 // Drawing a new task in the task list
-
+  
 let taskRender = () => {
+  let newTodoList = getList();
+  let pagTodoList = showPage(newTodoList);
   let taskHTML = " ";
-  getList().forEach((item) => {
+  pagTodoList.forEach((item) => {
     taskHTML += `<li class="todo__task" data-id="${item.id}">
-            <label class="todo__checkbox"> 
-                <input data-active="checkbox" type="checkbox" class="checkbox"
-                ${item.isCompleted ? "checked" : ""} >
-            </label >
-            <input value="${item.text}" type="text" class='editText' hidden>
-            <div class="todo__task-title">${item.text}</div>
-            <div class="todo__task-del" data-type = "todo_close">x</div>
-         </li>`;
+      <label class="todo__checkbox"> 
+        <input data-active="checkbox" type="checkbox" class="checkbox"
+        ${item.isCompleted ? "checked" : ""} >
+      </label >
+      <input value="${item.text}" class='editText' hidden>
+      <div class="todo__task-title">${item.text}</div>
+      <div class="todo__task-del">x</div>
+      </li>`;
   });
   taskList.innerHTML = taskHTML;
-  newInput.value = ""
-  sumTodo()
+  newInput.value = "";
+  sumTodo();
+  pagRender();
+  showPage(newTodoList);
 };
-
+  
 // Add task by click
 
 let addTask = () => {
@@ -83,14 +114,8 @@ let addTask = () => {
 // Add task by Enter
 
 let addByEnter = (event) => {
-  if (event.code === "Enter") {
-    let newTodo = {
-      id: Date.now(),
-      text: newInput.value,
-      isCompleted: false,
-    };
-    todoList.push(newTodo);
-    taskRender();
+  if (event.keyCode === 13) {
+    addTask()
   }
 };
 
@@ -105,11 +130,7 @@ let checkDone = (event) => {
   const activeTaskId = event.target.closest(".todo__task").getAttribute("data-id");
   const taskClick = todoList.find((item) => item.id === Number(activeTaskId));
   taskClick.isCompleted = !taskClick.isCompleted;
-  if(todoList.every((item) => item.isCompleted === true)){
-    checkAll.checked = true;
-  }else {
-    checkAll.checked = false;
-  }
+  todoList.every((item) => item.isCompleted ? checkAll.checked = true : checkAll.checked = false)  
   taskRender();
 };
 
@@ -174,7 +195,7 @@ let blurOn = (event) => {
     taskRender();
   }
 };
-   
+
 taskList.addEventListener("keydown", pressKey);
 taskList.addEventListener("blur", blurOn, true);
 taskList.addEventListener("click", switchClick);
@@ -184,3 +205,4 @@ btnAdd.addEventListener("click", addTask);
 btnDelAll.addEventListener("click", delAll);
 checkAll.addEventListener("click", checkAllTodo);
 todoShow.addEventListener("click", taskVisible);
+todoPaganation.addEventListener("click", crossPage);
