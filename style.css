@@ -96,6 +96,13 @@ body{
   cursor: pointer;
 }
 
+.todo__paganation{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
 .todo__pagination_btn{
   margin: 10px 10px;
   border-radius: 50%;
@@ -106,12 +113,6 @@ body{
   cursor: pointer;
   align-items: center;
  }
-  
-.todo__paganation{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
   
 .active{
   background-color: pink; 
