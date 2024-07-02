@@ -23,7 +23,7 @@
 
   let sumTodo = () => {
     let countTodo = todoList.length;
-    let countTodoActive = todoList.filter((item) => item.isCompleted === false).length
+    let countTodoActive = todoList.filter((item) => !item.isCompleted).length
     todoShow.childNodes[0].textContent = `All (${countTodo})`;
     todoShow.childNodes[2].textContent = `Active (${countTodoActive})`;
     todoShow.childNodes[4].textContent = `Completed (${countTodo - countTodoActive})`;
@@ -33,7 +33,16 @@
     tab = event.target.getAttribute('data-id');
     taskRender()
   };
- 
+
+  const switchFilterBtn = () => {
+    if(todoList.filter((item) => !item.isCompleted).length === 0){
+      tab = "all"
+    } else if(todoList.filter((item) => item.isCompleted).length === 0){
+      tab = "all"
+    }
+    taskRender()
+  };
+
   let getList = () => {
     switch (tab) {
     case "all":
@@ -123,9 +132,8 @@
  
   let validation = () => {
     if(newInput.value.trim()){
-      newInput.value = newInput.value.replace("<", "\≺").replace(">", "\≻").replace("№", "\№").replace("%", "\%").replace(":", "\:").replace("?", "\?").replace("*", "\*")
+      newInput.value = newInput.value.replace("<", "&#60;").replace(">", "&#62;").replace("№", "&#8470").replace("%", "&#37").replace(":", "&#58").replace("?", "&#63").replace("*", "&#42");
       addTask()
-      console.log.apply(newInput.value)
     };
   };
 
@@ -141,14 +149,16 @@
 
   let checkAllTodo = (event) => {
     todoList.forEach((item) => item.isCompleted = event.target.checked);
-    taskRender()
+    switchFilterBtn(); 
+    taskRender();
   };
 
   let checkDone = (event) => {
     const activeTaskId = event.target.closest(".todo__task").getAttribute("data-id");
     const taskClick = todoList.find((item) => item.id === Number(activeTaskId));
     taskClick.isCompleted = !taskClick.isCompleted;
-    changeAllCheck()
+    switchFilterBtn();
+    changeAllCheck();
     taskRender();
   };
 
@@ -161,16 +171,18 @@
     const activeTaskId = event.target.closest(".todo__task").getAttribute('data-id');
     todoList = todoList.filter((item) => Number(activeTaskId) !== item.id);
     activePage();
-    taskRender();
     changeAllCheck();
+    switchFilterBtn();
+    taskRender();
   };
 
   //Delete all completed tasks 
 
   let delAll = () => {
     todoList = todoList.filter((item) => !item.isCompleted)
-    taskRender();
     changeAllCheck();
+    switchFilterBtn();
+    taskRender();
   };
 
   // Processing status changes and task deletion by click
@@ -202,11 +214,15 @@
       if (event.keyCode === 13) {
         const editTask = element.getAttribute("data-id");
         const editText = todoList.find((item) => item.id === Number(editTask));
-        editText.text = element.childNodes[3].value;
-        taskRender();
+        if(element.childNodes[3].value.trim()){
+          element.childNodes[3].value = element.childNodes[3].value.replace("<", "&#60;").replace(">", "&#62;").replace("№", "&#8470").replace("%", "&#37").replace(":", "&#58").replace("?", "&#63").replace("*", "&#42");
+          editText.text = element.childNodes[3].value;
+          taskRender();
+        };
       } else if (event.keyCode === 27) {
         taskRender();
       }
+      
     }
   };
 
@@ -216,7 +232,11 @@
       const editTask = event.target.closest(".todo__task").getAttribute("data-id");
       const editText = todoList.find((item) => item.id === Number(editTask));
       editText.text = inputSave.value;
-      taskRender();
+      if(inputSave.value.trim()){
+        inputSave.value = inputSave.value.replace("<", "&#60;").replace(">", "&#62;").replace("№", "&#8470").replace("%", "&#37").replace(":", "&#58").replace("?", "&#63").replace("*", "&#42");
+        editText.text = inputSave.value;
+        taskRender();
+      }
     }
   };
 
