@@ -46,9 +46,9 @@
   };
 
   let btnFilterRender = () => {
-    todoShow.innerHTML = `<button class="todo__show_all ${"all" === tab ? "active" : ""} id="btnShowAll" data-id ="all">All (0)</button>
-   <button class="todo__show_active ${"active" === tab ? "active" : ""}" id="btnShowActive" data-id ="active">Active (0)</button>
-   <button class="todo__show_complete ${ "completed" === tab ? "active" : ""}" id="btnShowComplete" data-id ="completed">Completed (0)</button>`;
+    todoShow.innerHTML = `<button class="todo__show_all ${"all" === tab ? "active" : ""} btn btn-danger-border-subtle" id="btnShowAll" data-id ="all">All (0)</button>
+   <button class="todo__show_active ${"active" === tab ? "active" : ""} btn btn-danger-border-subtle" id="btnShowActive" data-id ="active">Active (0)</button>
+   <button class="todo__show_complete ${ "completed" === tab ? "active" : ""} btn btn-danger-border-subtle" id="btnShowComplete" data-id ="completed">Completed (0)</button>`;
   };
  
  
@@ -75,7 +75,7 @@
         "active" : ""}" data-page="${i+1}">${i+1}</button>`;
     }
     todoPaganation.innerHTML = addPageHTML;
-  }
+  };
 
   let activePage = () => {
     const pagesTotal = Math.ceil(todoList.length / itemsPerPage);
@@ -89,15 +89,15 @@
     let pagTodoList = showPage(newTodoList);
     let taskHTML = " ";
     pagTodoList.forEach((item) => {
-      taskHTML += `<li class="todo__task" data-id="${item.id}">
-      <label class="todo__checkbox"> 
-        <input data-active="checkbox" type="checkbox" class="checkbox"
-        ${item.isCompleted ? "checked" : "" }>
-      </label >
-      <input value="${item.text}" class='editText' hidden maxlength="255">
-      <div class="todo__task-title">${item.text}</div>
-      <div class="todo__task-del">x</div>
-   </li>`;
+      taskHTML += `<li class="todo__task list-group-item list-group-item-info form-check text-break" data-id="${item.id}">
+        <label class="todo__checkbox form-check-label"> 
+          <input data-active="checkbox" type="checkbox" class="checkbox form-check-input"
+          ${item.isCompleted ? "checked" : "" }>
+        </label >
+        <input value="${item.text}" class='editText' hidden maxlength="255">
+        <div class="todo__task-title">${item.text}</div>
+        <div class="todo__task-del btn-close"></div>
+      </li>`;
     });
     taskList.innerHTML = taskHTML;
     newInput.value = "";
@@ -119,15 +119,17 @@
     changeAllCheck()
     activePage()
     taskRender();
-  }
+  };
  
   let validation = () => {
     if(newInput.value.trim()){
+      newInput.value = newInput.value.replace("<", "\≺").replace(">", "\≻").replace("№", "\№").replace("%", "\%").replace(":", "\:").replace("?", "\?").replace("*", "\*")
       addTask()
-    }
-  }
+      console.log.apply(newInput.value)
+    };
+  };
 
-  // Add task by Enter
+  // Add task by Enter "№%:?*
 
   let addByEnter = (event) => {
     if (event.keyCode === 13) {
@@ -140,7 +142,7 @@
   let checkAllTodo = (event) => {
     todoList.forEach((item) => item.isCompleted = event.target.checked);
     taskRender()
-  }
+  };
 
   let checkDone = (event) => {
     const activeTaskId = event.target.closest(".todo__task").getAttribute("data-id");
@@ -152,7 +154,7 @@
 
   let changeAllCheck = () => {
     checkAll.checked = todoList.length && todoList.every((item) => item.isCompleted); 
-  } 
+  };
   // Adding a delete button
 
   let deleteTask = (event) => {
@@ -231,5 +233,3 @@
   todoShow.addEventListener("click", taskVisible);
   todoPaganation.addEventListener("click", crossPage);
 }());
-
-

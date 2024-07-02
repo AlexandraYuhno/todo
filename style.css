@@ -1,52 +1,53 @@
 *{
- margin: 0;
- box-sizing: border-box;
+  margin: 0;
+  box-sizing: border-box;
 }
-  
+ 
 body{
-  background-color: #ffb3d5;
   display: flex;
   justify-content: center;
   padding: 32px;
 }
-  
+ 
 .todo__title{
   margin-bottom: 20px;
   text-align: center;
 }
-  
+ 
 .todo{
   padding: 32px;
   background-color: #fff;
   border: 1px solid #000;
 }
-  
+ 
 .todo__new{
   display: flex;
-  padding: 16px 0 32px;
+  padding: 15px 0 15px;
 }
-  
+ 
 .todo__add{
   margin-left: 32px;
   cursor: pointer;
 }
-  
-.todo__task {
+ 
+.todo__task{
   cursor: default;
   display: flex;
   align-items: center;
   background-color: #F5DCFF;
   border-radius: 5px;
   margin-bottom: 10px;
-  max-width: 300px;
+  /* overflow: hidden;
+  text-overflow: ellipsis; */
+  max-width: 370px;
 }
-  
+
 .todo__list{
   padding: 0;
-  margin-bottom: 20px;
+  box-sizing: border-box;
 }
-  
-.todo__task-del {
+ 
+.todo__task-del{
   width: var(--size);
   height: var(--size);
   line-height: var(--size);
@@ -64,7 +65,11 @@ body{
   background-color: #AB235D;
   line-height: cal(var(--size)*0.88);
 }
-  
+.checkbox{
+  width:20px;
+  height:20px;
+  margin-right: 10px;
+}
 .todo__del-all{
   margin: 20px 20px;
   cursor: pointer;
@@ -78,43 +83,46 @@ body{
   left: 50%;
   transform: translate(-50%, 0);
 }
-  
+ 
 .todo__checkAll{
   display: flex;
   justify-content: center;
   cursor: pointer;
-  background-color: #F5DCFF;
 }
-  
+ 
 .todo__checkAll_checkbox{
   margin-left: 32px;
+  width:20px;
+  height:20px;
 }
-  
+ 
 .todo__show{
+  margin-top: 10px;
   display: flex;
   justify-content: center;
   align-content: stretch;
   cursor: pointer;
 }
-  
+ 
 .todo__paganation{
   display: flex;
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
 }
-  
+ 
 .todo__pagination_btn{
-  margin: 10px 10px;
   border-radius: 50%;
-  width: 20px;
-  height: 20px;
+  margin: 10px;
+  width: 25px;
+  height: 25px;
   background-color: #F5DCFF;
   border: none;
   cursor: pointer;
   align-items: center;
 }
- 
+  
 .active{
- background-color: pink; 
+  background-color: pink; 
 }
+ 
