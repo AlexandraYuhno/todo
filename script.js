@@ -9,15 +9,11 @@
   const todoPaganation = document.getElementById('todoPaganation');
 
   let tab = 'all';
-  const items_page = 5;
-  let current_page = 1; 
-  const tab_enter = 13;
-
-  // Displaying the added task in the task list
+  const ITEMS_PAGE = 5;
+  let CURRENT_PAGE = 1; 
+  const TAB_ENTER = 13;
 
   let todoList = [];
-
-  //Filtering tasks
 
   const sumTodo = () => {
     const countTodo = todoList.length;
@@ -29,7 +25,7 @@
 
   const taskVisible = (event) => {
     tab = event.target.getAttribute('data-id');
-    current_page = 1
+    CURRENT_PAGE = 1
     taskRender()
   };
 
@@ -61,37 +57,33 @@
    <button class="todo__show_complete ${ "completed" === tab ? "active" : ""} btn btn-danger-border-subtle" id="btnShowComplete" data-id ="completed">Completed (0)</button>`;
   };
  
-  //Pagination task
- 
   const showPage = (newTodoList) => {
-    const itemsStart = (current_page - 1) * items_page;
-    const itemsEnd = itemsStart + items_page;
+    const itemsStart = (CURRENT_PAGE - 1) * ITEMS_PAGE;
+    const itemsEnd = itemsStart + ITEMS_PAGE;
     const pagTodoList = newTodoList.slice(itemsStart, itemsEnd); 
     return pagTodoList;
   };
  
   const crossPage = (event) => {
     let page = event.target.getAttribute("data-page");
-    current_page = Number(page);
+    CURRENT_PAGE = Number(page);
     taskRender()
   };
  
   const pagRender = () => {
     let addPageHTML = '';
-    const pagesTotal = Math.ceil(todoList.length / items_page);
+    const pagesTotal = Math.ceil(todoList.length / ITEMS_PAGE);
     for (let i = 0; i < pagesTotal; i++) {
-      addPageHTML += `<button class="todo__pagination_btn ${current_page === i+1 ? 
+      addPageHTML += `<button class="todo__pagination_btn ${CURRENT_PAGE === i+1 ? 
         "active" : ""}" data-page="${i+1}">${i+1}</button>`;
     }
     todoPaganation.innerHTML = addPageHTML;
   };
 
   const activePage = () => {
-    const pagesTotal = Math.ceil(todoList.length / items_page);
-    current_page = pagesTotal;
+    const pagesTotal = Math.ceil(todoList.length / ITEMS_PAGE);
+    CURRENT_PAGE = pagesTotal;
   };
-
-  // Drawing a new task in the task list
  
   const taskRender = () => {
     let newTodoList = getList();
@@ -115,8 +107,6 @@
     pagRender();
     showPage(newTodoList);
   };
- 
-  // Add task by click
 
   const addTask = () => {
     let newTodo = {
@@ -134,21 +124,17 @@
   const validation = () => {
 
     if(newInput.value.trim()){
-      newInput.value = newInput.value.replace("<", "&#60;").replace(">", "&#62;").replace("№", "&#8470").replace("%", "&#37").replace(":", "&#58").replace("?", "&#63").replace("*", "&#42").replace(/ {2,}/g, " ").replace("/", "&#47");
+      newInput.value = newInput.value.replace(/ {2,}/g, " ");
+      newInput.value = _.escape(newInput.value);
       addTask()
     };
-    // newInput.value = newInput.value.escape(newInput.value)
   };
 
-  // Add task by Enter 
-
   const addByEnter = (event) => {
-    if (event.keyCode === tab_enter) {
+    if (event.keyCode === TAB_ENTER) {
       validation();
     }
   };
-
-  // Changing the state of each all todo and together
 
   const checkAllTodo = (event) => {
     todoList.forEach((item) => item.isCompleted = event.target.checked);
@@ -168,7 +154,6 @@
   const changeAllCheck = () => {
     checkAll.checked = todoList.length && todoList.every((item) => item.isCompleted); 
   };
-  // Adding a delete button
 
   const deleteTask = (event) => {
     const activeTaskId = event.target.closest(".todo__task").getAttribute('data-id');
@@ -179,16 +164,12 @@
     taskRender();
   };
 
-  //Delete all completed tasks 
-
   const delAll = () => {
     todoList = todoList.filter((item) => !item.isCompleted)
     changeAllCheck();
     switchFilterBtn();
     taskRender();
   };
-
-  // Processing status changes and task deletion by click
 
   const switchClick = (event) => {
     const element = event.target.closest(".todo__task");
@@ -200,8 +181,6 @@
     }
   };
 
-  // Editing a task
-
   const switchDblClick = (event) => {
     const element = event.target.closest(".todo__task");
     element.childNodes[3].hidden = false;
@@ -209,13 +188,11 @@
     element.childNodes[3].focus();
   };
 
-  // Saving with enter and blur, undoing changes with escape  
-
   const pressKey = (event) => {
     const element = event.target.closest(".todo__task");
     const elementContent = element.childNodes[3];
     if (event.target === elementContent) {
-      if (event.keyCode === tab_enter) {
+      if (event.keyCode === TAB_ENTER) {
         const editTask = element.getAttribute("data-id");
         const editText = todoList.find((item) => item.id === Number(editTask));
         if(elementContent.value.trim()){
