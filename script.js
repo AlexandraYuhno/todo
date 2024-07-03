@@ -1,4 +1,4 @@
-(function appTodo(){
+(() => {
 
   const newInput = document.getElementById("newInput");
   const btnAdd = document.getElementById("btnAdd");
@@ -8,22 +8,20 @@
   const todoShow = document.getElementById('todoShow');
   const todoPaganation = document.getElementById('todoPaganation');
 
-  let tab = 'all'
-  const itemsPerPage = 5;
-  let currentPage = 1; 
+  let tab = 'all';
+  const items_page = 5;
+  let current_page = 1; 
+  const tab_enter = 13;
 
   // Displaying the added task in the task list
 
-  let todoList = [
-    { id: Date.now(), text: "Задача 1", isCompleted: true },
-    { id: Date.now() + 3, text: "Задача 2", isCompleted: false },
-  ];
+  let todoList = [];
 
   //Filtering tasks
 
-  let sumTodo = () => {
-    let countTodo = todoList.length;
-    let countTodoActive = todoList.filter((item) => !item.isCompleted).length
+  const sumTodo = () => {
+    const countTodo = todoList.length;
+    const countTodoActive = todoList.filter((item) => !item.isCompleted).length
     todoShow.childNodes[0].textContent = `All (${countTodo})`;
     todoShow.childNodes[2].textContent = `Active (${countTodoActive})`;
     todoShow.childNodes[4].textContent = `Completed (${countTodo - countTodoActive})`;
@@ -31,19 +29,22 @@
 
   const taskVisible = (event) => {
     tab = event.target.getAttribute('data-id');
+    current_page = 1
     taskRender()
   };
 
   const switchFilterBtn = () => {
-    if(todoList.filter((item) => !item.isCompleted).length === 0){
+    const countTodoActive = todoList.filter((item) => !item.isCompleted).length;
+    const countTodoCompleted = todoList.length - countTodoActive;
+    if(countTodoActive === 0){
       tab = "all"
-    } else if(todoList.filter((item) => item.isCompleted).length === 0){
+    } else if(countTodoCompleted === 0){
       tab = "all"
     }
     taskRender()
   };
 
-  let getList = () => {
+  const getList = () => {
     switch (tab) {
     case "all":
       return todoList;
@@ -54,46 +55,45 @@
     }
   };
 
-  let btnFilterRender = () => {
+  const btnFilterRender = () => {
     todoShow.innerHTML = `<button class="todo__show_all ${"all" === tab ? "active" : ""} btn btn-danger-border-subtle" id="btnShowAll" data-id ="all">All (0)</button>
    <button class="todo__show_active ${"active" === tab ? "active" : ""} btn btn-danger-border-subtle" id="btnShowActive" data-id ="active">Active (0)</button>
    <button class="todo__show_complete ${ "completed" === tab ? "active" : ""} btn btn-danger-border-subtle" id="btnShowComplete" data-id ="completed">Completed (0)</button>`;
   };
  
- 
   //Pagination task
  
-  let showPage = (newTodoList) => {
-    const itemsStart = (currentPage - 1) * itemsPerPage;
-    const itemsEnd = itemsStart + itemsPerPage;
+  const showPage = (newTodoList) => {
+    const itemsStart = (current_page - 1) * items_page;
+    const itemsEnd = itemsStart + items_page;
     const pagTodoList = newTodoList.slice(itemsStart, itemsEnd); 
     return pagTodoList;
   };
  
-  let crossPage = (event) => {
+  const crossPage = (event) => {
     let page = event.target.getAttribute("data-page");
-    currentPage = Number(page);
+    current_page = Number(page);
     taskRender()
   };
  
-  let pagRender = () => {
+  const pagRender = () => {
     let addPageHTML = '';
-    const pagesTotal = Math.ceil(todoList.length / itemsPerPage);
+    const pagesTotal = Math.ceil(todoList.length / items_page);
     for (let i = 0; i < pagesTotal; i++) {
-      addPageHTML += `<button class="todo__pagination_btn ${currentPage === i+1 ? 
+      addPageHTML += `<button class="todo__pagination_btn ${current_page === i+1 ? 
         "active" : ""}" data-page="${i+1}">${i+1}</button>`;
     }
     todoPaganation.innerHTML = addPageHTML;
   };
 
-  let activePage = () => {
-    const pagesTotal = Math.ceil(todoList.length / itemsPerPage);
-    currentPage = pagesTotal;
+  const activePage = () => {
+    const pagesTotal = Math.ceil(todoList.length / items_page);
+    current_page = pagesTotal;
   };
 
   // Drawing a new task in the task list
  
-  let taskRender = () => {
+  const taskRender = () => {
     let newTodoList = getList();
     let pagTodoList = showPage(newTodoList);
     let taskHTML = " ";
@@ -118,42 +118,45 @@
  
   // Add task by click
 
-  let addTask = () => {
+  const addTask = () => {
     let newTodo = {
       id: Date.now(),
       text: newInput.value,
       isCompleted: false,
     };  
+    tab = "all";
     todoList.push(newTodo);
     changeAllCheck()
     activePage()
     taskRender();
   };
  
-  let validation = () => {
+  const validation = () => {
+
     if(newInput.value.trim()){
-      newInput.value = newInput.value.replace("<", "&#60;").replace(">", "&#62;").replace("№", "&#8470").replace("%", "&#37").replace(":", "&#58").replace("?", "&#63").replace("*", "&#42");
+      newInput.value = newInput.value.replace("<", "&#60;").replace(">", "&#62;").replace("№", "&#8470").replace("%", "&#37").replace(":", "&#58").replace("?", "&#63").replace("*", "&#42").replace(/ {2,}/g, " ").replace("/", "&#47");
       addTask()
     };
+    // newInput.value = newInput.value.escape(newInput.value)
   };
 
-  // Add task by Enter "№%:?*
+  // Add task by Enter 
 
-  let addByEnter = (event) => {
-    if (event.keyCode === 13) {
+  const addByEnter = (event) => {
+    if (event.keyCode === tab_enter) {
       validation();
     }
   };
 
   // Changing the state of each all todo and together
 
-  let checkAllTodo = (event) => {
+  const checkAllTodo = (event) => {
     todoList.forEach((item) => item.isCompleted = event.target.checked);
     switchFilterBtn(); 
     taskRender();
   };
 
-  let checkDone = (event) => {
+  const checkDone = (event) => {
     const activeTaskId = event.target.closest(".todo__task").getAttribute("data-id");
     const taskClick = todoList.find((item) => item.id === Number(activeTaskId));
     taskClick.isCompleted = !taskClick.isCompleted;
@@ -162,12 +165,12 @@
     taskRender();
   };
 
-  let changeAllCheck = () => {
+  const changeAllCheck = () => {
     checkAll.checked = todoList.length && todoList.every((item) => item.isCompleted); 
   };
   // Adding a delete button
 
-  let deleteTask = (event) => {
+  const deleteTask = (event) => {
     const activeTaskId = event.target.closest(".todo__task").getAttribute('data-id');
     todoList = todoList.filter((item) => Number(activeTaskId) !== item.id);
     activePage();
@@ -178,7 +181,7 @@
 
   //Delete all completed tasks 
 
-  let delAll = () => {
+  const delAll = () => {
     todoList = todoList.filter((item) => !item.isCompleted)
     changeAllCheck();
     switchFilterBtn();
@@ -187,7 +190,7 @@
 
   // Processing status changes and task deletion by click
 
-  let switchClick = (event) => {
+  const switchClick = (event) => {
     const element = event.target.closest(".todo__task");
     const liLabel = element.childNodes[1];
     if (event.target === liLabel.childNodes[1]) {
@@ -199,42 +202,44 @@
 
   // Editing a task
 
-  let switchDblClick = (event) => {
+  const switchDblClick = (event) => {
     const element = event.target.closest(".todo__task");
     element.childNodes[3].hidden = false;
     element.childNodes[5].hidden = true;
     element.childNodes[3].focus();
   };
 
-  // Saving with enter and blur, undoing changes with escape
+  // Saving with enter and blur, undoing changes with escape  
 
-  let pressKey = (event) => {
+  const pressKey = (event) => {
     const element = event.target.closest(".todo__task");
-    if (event.target === element.childNodes[3]) {
-      if (event.keyCode === 13) {
+    const elementContent = element.childNodes[3];
+    if (event.target === elementContent) {
+      if (event.keyCode === tab_enter) {
         const editTask = element.getAttribute("data-id");
         const editText = todoList.find((item) => item.id === Number(editTask));
-        if(element.childNodes[3].value.trim()){
-          element.childNodes[3].value = element.childNodes[3].value.replace("<", "&#60;").replace(">", "&#62;").replace("№", "&#8470").replace("%", "&#37").replace(":", "&#58").replace("?", "&#63").replace("*", "&#42");
-          editText.text = element.childNodes[3].value;
+        if(elementContent.value.trim()){
+          elementContent.value = elementContent.value.replace(/ {2,}/g, " ");
+          editText.text = _.escape(elementContent.value);
           taskRender();
         };
       } else if (event.keyCode === 27) {
+        const editTask = element.getAttribute("data-id");
+        const editText = todoList.find((item) => item.id === Number(editTask));
+        elementContent.value = editText.text;
         taskRender();
       }
-      
     }
   };
 
-  let blurOn = (event) => {
+  const blurOn = (event) => {
     const inputSave = event.target.closest(".todo__task").childNodes[3];
     if (event.target === inputSave) {
       const editTask = event.target.closest(".todo__task").getAttribute("data-id");
       const editText = todoList.find((item) => item.id === Number(editTask));
-      editText.text = inputSave.value;
       if(inputSave.value.trim()){
-        inputSave.value = inputSave.value.replace("<", "&#60;").replace(">", "&#62;").replace("№", "&#8470").replace("%", "&#37").replace(":", "&#58").replace("?", "&#63").replace("*", "&#42");
-        editText.text = inputSave.value;
+        inputSave.value = inputSave.value.replace(/ {2,}/g, " ");
+        editText.text = _.escape(inputSave.value);
         taskRender();
       }
     }
@@ -252,4 +257,4 @@
   checkAll.addEventListener("click", checkAllTodo);
   todoShow.addEventListener("click", taskVisible);
   todoPaganation.addEventListener("click", crossPage);
-}());
+})();
