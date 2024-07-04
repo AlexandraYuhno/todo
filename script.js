@@ -73,9 +73,9 @@
     taskRender();
   };
 
-  const pagRender = () => {
+  const pagRender = (newTodoList) => {
     let addPageHTML = '';
-    const pagesTotal = Math.ceil(todoList.length / ITEMS_PAGE);
+    const pagesTotal = Math.ceil(newTodoList.length / ITEMS_PAGE);
     for (let i = 0; i < pagesTotal; i++) {
       addPageHTML += `<button id='pagination_btn' class='todo__pagination_btn ${current_page === i+1 ? 
         'active' : ''}' data-page='${i+1}'>${i+1}</button>`;
@@ -105,11 +105,11 @@
     });
     taskList.innerHTML = taskHTML;
     newInput.value = '';
+    changeAllCheck();
     checkAllNoActive();
     btnFilterRender();
     sumTodo();
-    pagRender();
-    showPage(newTodoList);
+    pagRender(newTodoList);
   };
 
   const addTask = () => {
@@ -120,9 +120,7 @@
     };  
     tab = 'all';
     todoList.push(newTodo);
-    changeAllCheck();
     activePage();
-    checkAllNoActive();
     taskRender();
   };
  
@@ -159,7 +157,6 @@
     const taskClick = todoList.find((item) => item.id === Number(activeTaskId));
     taskClick.isCompleted = !taskClick.isCompleted;
     switchFilterBtn();
-    changeAllCheck();
     taskRender();
   };
 
@@ -171,17 +168,13 @@
     const activeTaskId = event.target.closest('.todo__task').getAttribute('data-id');
     todoList = todoList.filter((item) => Number(activeTaskId) !== item.id);
     activePage();
-    changeAllCheck();
     switchFilterBtn();
-    checkAllNoActive();
     taskRender();
   };
 
   const delAll = () => {
     todoList = todoList.filter((item) => !item.isCompleted)
-    changeAllCheck();
     switchFilterBtn();
-    checkAllNoActive();
     taskRender();
   };
 
