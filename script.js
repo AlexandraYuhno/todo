@@ -32,14 +32,12 @@
   const switchFilterBtn = () => {
     const countTodoActive = todoList.filter((item) => !item.isCompleted).length;
     const countTodoCompleted = todoList.length - countTodoActive;
-    if(countTodoActive === 0){
+    if(countTodoActive === 0 || countTodoCompleted === 0){
       tab = 'all'
-    } else if(countTodoCompleted === 0){
-      tab = 'all'
-    }
+    } 
     taskRender()
   };
-
+ 
   const getList = () => {
     switch (tab) {
     case 'all':
@@ -91,7 +89,7 @@
   const taskRender = () => {
     let newTodoList = getList();
     let pagTodoList = showPage(newTodoList);
-    let taskHTML = ' ';
+    let taskHTML = '';
     pagTodoList.forEach((item) => {
       taskHTML += `<li class='todo__task list-group-item list-group-item-info form-check text-break' data-id='${item.id}'>
         <label class='todo__checkbox form-check-label'> 
@@ -103,6 +101,7 @@
         <div class='todo__task-del btn-close'></div>
       </li>`;
     });
+    
     taskList.innerHTML = taskHTML;
     newInput.value = '';
     changeAllCheck();
@@ -128,9 +127,18 @@
     if(newInput.value.trim()){
       newInput.value = newInput.value.replace(/ {2,}/g, ' ').trim();
       newInput.value = _.escape(newInput.value);
-      addTask()
     };
+    addTask()
   };
+
+  // const validation = (value) => {
+  //   console.log(value)
+  //   const validationValue = value.trim()
+  //   if(validationValue.length !== 0){
+  //     const str = validationValue.replace(/ {2,}/g, ' ').trim();
+  //     return _.escape(str);
+  //   };
+  // };
 
   const addByEnter = (event) => {
     if (event.keyCode === TAB_ENTER) {
@@ -139,11 +147,7 @@
   };
 
   const checkAllNoActive = (event) => {
-    if(todoList.length === 0){
-      checkAll.disabled = true;
-    } else {
-      checkAll.disabled = false;
-    }
+    todoList.length === 0 ? checkAll.disabled : !checkAll.disabled;
   };
 
   const checkAllTodo = (event) => {
@@ -224,14 +228,12 @@
       const editTask = event.target.closest('.todo__task').getAttribute('data-id');
       const editText = todoList.find((item) => item.id === Number(editTask));
       if(inputSave.value.trim()){
-        inputSave.value = inputSave.value.replace(/ {2,}/g, ' ').trim();;
+        inputSave.value = inputSave.value.replace(/ {2,}/g, ' ').trim();
         editText.text = _.escape(inputSave.value);
         taskRender();
       }
     }
   };
-
-  taskRender()
 
   taskList.addEventListener('keydown', pressKey);
   taskList.addEventListener('blur', blurOn, true);
