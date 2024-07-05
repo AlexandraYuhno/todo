@@ -128,7 +128,7 @@
   
    const validation = (value) => {
     const validationValue = value.trim()
-    if(validationValue.length){
+    if(validationValue.length !== 0){
      const str = validationValue.replace(/ {2,}/g, ' ');
      return _.escape(str);
     }
@@ -205,11 +205,6 @@
        editText.text = text;
        taskRender();
       }
-      if(elementContent.value.trim()){
-       elementContent.value = elementContent.value.replace(/ {2,}/g, ' ').trim();
-       editText.text = _.escape(elementContent.value);
-       taskRender();
-      };
      } else if (event.keyCode === 27) {
       const editTask = element.getAttribute('data-id');
       const editText = todoList.find((item) => item.id === Number(editTask));
