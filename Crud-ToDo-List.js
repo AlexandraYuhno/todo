@@ -12,7 +12,7 @@
   const ITEMS_PAGE = 5;
   let current_page = 1; 
   const TAB_ENTER = 13;
-  const URL = 'http://localhost:3000/tasks';
+  const URL = 'http://localhost:3001/tasks';
   
   let todoList = [];
   
@@ -46,8 +46,8 @@
     .catch((error) => alertError(error))
   };
   
-  const deleteCompletedTasks = () => {
-    return fetch(`${URL} + '/completed'`, {
+  const deleteCompletedTasks = async () => {
+     await fetch(`${URL} + '/completed'`, {
       method: 'DELETED',
       headers: {
         'Content-Type': 'application/json',
@@ -55,12 +55,63 @@
     })
     .then((res) => res.json())
     .then(result => {
-
+      todoList = todoList.filter((result) => !result.isCompleted)
+      switchFilterBtn();
+      taskRender();
     })
-    .catch((e) => {throw new Error('Error')})
+    .catch((error) => alertError(error))
   };
   
+  /*
   
+  const deleteTask = (id) => {
+    return fetch(`${URL} + ${id}`, {
+      method: 'DELETED',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    .then((res) => res.json())
+    .then(result => {
+      
+    })
+    .catch((error) => alertError(error))
+  };
+
+
+  const editedTask = await fetch(`${URL} + ${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(data),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+  .then((res) => 
+    if (!response.ok) {
+      throw new Error('Error');
+    }
+    return res.json())
+  .catch((error) => alertError(error))
+  }
+
+  const checkAllTasks = await fetch(URL, {
+    method: 'PATCH',
+    body: JSON.stringify(data),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+  .then((res) => 
+    if (!response.ok) {
+      throw new Error('Error');
+    }
+    return res.json())
+  .catch((error) => alertError(error))
+  }
+*/
+
+
+
   
   const sumTodo = () => {
     const countTodo = todoList.length;
@@ -220,12 +271,11 @@
     taskRender();
   };
   
-  const delAll = async () => {
+  /*const delAll = () => {
     todoList = todoList.filter((item) => !item.isCompleted)
     switchFilterBtn();
-    await deleteCompletedTasks()
     taskRender();
-  };
+  };*/
   
   const switchClick = (event) => {
     const element = event.target.closest('.todo__task');
@@ -286,7 +336,7 @@
   taskList.addEventListener('dblclick', switchDblClick);
   newInput.addEventListener('keydown', addByEnter);
   btnAdd.addEventListener('click', addTask);
-  btnDelAll.addEventListener('click', delAll);
+  btnDelAll.addEventListener('click', deleteCompletedTasks);
   checkAll.addEventListener('click', checkAllTodo);
   todoShow.addEventListener('click', taskVisible);
   todoPaganation.addEventListener('click', crossPage);
