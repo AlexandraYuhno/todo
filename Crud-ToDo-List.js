@@ -41,77 +41,69 @@
     .then((res) => res.json())
     .then(result => {
       todoList.push(result);
+      activePage();
       taskRender();
     })
     .catch((error) => alertError(error))
   };
   
   const deleteCompletedTasks = async () => {
-     await fetch(`${URL} + '/completed'`, {
-      method: 'DELETED',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+     await fetch('http://127.0.0.1:3001/tasks/completed', {
+      method: 'DELETE',
     })
-    .then((res) => res.json())
-    .then(result => {
-      todoList = todoList.filter((result) => !result.isCompleted)
+    .then(() => {
+      todoList = todoList.filter((item) => !item.isCompleted)
       switchFilterBtn();
       taskRender();
     })
     .catch((error) => alertError(error))
   };
   
-  /*
-  
-  const deleteTask = (id) => {
-    return fetch(`${URL} + ${id}`, {
-      method: 'DELETED',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+  const deleteTaskId = async (id) => {
+    await fetch(`${URL}/${id}`, {
+      method: 'DELETE',
     })
-    .then((res) => res.json())
-    .then(result => {
-      
+    .then(() => {
+      todoList = todoList.filter((item) => Number(id) !== item.id);
+      activePage();
+      switchFilterBtn();
+      taskRender();
     })
     .catch((error) => alertError(error))
   };
 
-
-  const editedTask = await fetch(`${URL} + ${id}`, {
+  const updateTask = async (item) => {
+    await fetch(`${URL}/${item.id}`, {
     method: 'PATCH',
-    body: JSON.stringify(data),
+    body: JSON.stringify(item),
     headers: {
       'Content-Type': 'application/json',
     },
-  });
-  .then((res) => 
-    if (!response.ok) {
-      throw new Error('Error');
-    }
-    return res.json())
+  })
+  .then((res) => res.json())
+  .then(res => {
+    todoList = todoList.map((item) => {
+     return item.id === res.id ? res : item;
+    });
+  })   
   .catch((error) => alertError(error))
   }
 
-  const checkAllTasks = await fetch(URL, {
+  const checkAllTasks = async (event) => {
+  await fetch(URL, {
     method: 'PATCH',
-    body: JSON.stringify(data),
+    body: JSON.stringify(),
     headers: {
       'Content-Type': 'application/json',
     },
-  });
-  .then((res) => 
-    if (!response.ok) {
-      throw new Error('Error');
-    }
-    return res.json())
+  })
+  .then(() => {
+    todoList.forEach((item) => item.isCompleted = event.target.checked);
+    switchFilterBtn(); 
+    taskRender();
+  })
   .catch((error) => alertError(error))
   }
-*/
-
-
-
   
   const sumTodo = () => {
     const countTodo = todoList.length;
@@ -222,8 +214,6 @@
     }; 
     tab = 'all';
     createTask(newTodo);
-    activePage();
-    taskRender();
     }
   };
   
@@ -245,16 +235,17 @@
     todoList.length === 0 ? checkAll.disabled : !checkAll.disabled;
   };
   
-  const checkAllTodo = (event) => {
+ /* const checkAllTodo = (event) => {
     todoList.forEach((item) => item.isCompleted = event.target.checked);
     switchFilterBtn(); 
     taskRender();
-  };
+  };*/
   
-  const checkDone = (event) => {
+  const checkDone = async (event) => {
     const activeTaskId = event.target.closest('.todo__task').getAttribute('data-id');
     const taskClick = todoList.find((item) => item.id === Number(activeTaskId));
     taskClick.isCompleted = !taskClick.isCompleted;
+    await updateTask(taskClick)
     switchFilterBtn();
     taskRender();
   };
@@ -265,10 +256,11 @@
   
   const deleteTask = (event) => {
     const activeTaskId = event.target.closest('.todo__task').getAttribute('data-id');
-    todoList = todoList.filter((item) => Number(activeTaskId) !== item.id);
-    activePage();
-    switchFilterBtn();
-    taskRender();
+    deleteTaskId(activeTaskId)
+    // todoList = todoList.filter((item) => Number(activeTaskId) !== item.id);
+    // activePage();
+    // switchFilterBtn();
+    // taskRender();
   };
   
   /*const delAll = () => {
@@ -294,37 +286,43 @@
     element.childNodes[3].focus();
   };
   
-  const pressKey = (event) => {
+  const pressKey = async (event) => {
     const element = event.target.closest('.todo__task');
     const elementContent = element.childNodes[3];
       if (event.target === elementContent) {
         if (event.keyCode === TAB_ENTER) {
-          const editTask = element.getAttribute('data-id');
-          const editText = todoList.find((item) => item.id === Number(editTask));
+          const todoId = element.getAttribute('data-id');
+          const todoItem = todoList.find((item) => item.id === Number(todoId));
           const text = validation(elementContent.value)
           if(text){
-            editText.text = text;
+            todoItem.text = text;
+            console.log("1")
+            await updateTask(todoItem)
             taskRender();
           };
         } else if (event.keyCode === 27) {
-          const editTask = element.getAttribute('data-id');
-          const editText = todoList.find((item) => item.id === Number(editTask));
-          elementContent.value = editText.text;
+          const todoId = element.getAttribute('data-id');
+          const todoItem = todoList.find((item) => item.id === Number(todoId));
+          elementContent.value = todoItem.text;
+          console.log("2")
+          await updateTask(todoItem)
           taskRender();
         }
       }
   };
   
-  const blurOn = (event) => {
+  const blurOn = async (event) => {
     const inputSave = event.target.closest('.todo__task').childNodes[3];
     if(!inputSave.value){
       taskRender()
     } else if (event.target === inputSave) {
-      const editTask = event.target.closest('.todo__task').getAttribute('data-id');
-      const editText = todoList.find((item) => item.id === Number(editTask));
+      const todoId = event.target.closest('.todo__task').getAttribute('data-id');
+      const todoItem = todoList.find((item) => item.id === Number(todoId));
       const text = validation(inputSave.value)
       if(text){
-        editText.text = text;
+        todoItem.text = text;
+        console.log("3")
+        await updateTask(todoItem)
         taskRender();
       };
     }
@@ -337,7 +335,7 @@
   newInput.addEventListener('keydown', addByEnter);
   btnAdd.addEventListener('click', addTask);
   btnDelAll.addEventListener('click', deleteCompletedTasks);
-  checkAll.addEventListener('click', checkAllTodo);
+  checkAll.addEventListener('click', checkAllTasks);
   todoShow.addEventListener('click', taskVisible);
   todoPaganation.addEventListener('click', crossPage);
   window.addEventListener('load', getAllTodo)
