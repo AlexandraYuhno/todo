@@ -48,15 +48,17 @@
   };
   
   const deleteCompletedTasks = async () => {
-     await fetch(`${URL}/completed`, {
+    if(todoList.length !== 0){
+      await fetch(`${URL}/completed`, {
       method: 'DELETE',
-    })
-    .then(() => {
-      todoList = todoList.filter((item) => !item.isCompleted)
-      switchFilterBtn();
-      taskRender();
-    })
-    .catch((error) => alertError(error))
+      })
+      .then(() => {
+        todoList = todoList.filter((item) => !item.isCompleted)
+        switchFilterBtn();
+        taskRender();
+      })
+      .catch((error) => alertError(error))
+    }
   };
   
   const deleteTaskId = async (id) => {
@@ -182,6 +184,10 @@
     current_page = pagesTotal;
   };
   
+  const checkAllNoActive = () => {
+    todoList.length === 0 ? checkAll.disabled : !checkAll.disabled;
+  };
+
   const taskRender = () => {
     let newTodoList = getList();
     let pagTodoList = showPage(newTodoList);
@@ -200,8 +206,8 @@
     });
     taskList.innerHTML = taskHTML;
     newInput.value = '';
-    changeAllCheck();
     checkAllNoActive();
+    changeAllCheck();
     btnFilterRender();
     sumTodo();
     pagRender(newTodoList);
@@ -231,10 +237,6 @@
     if (event.keyCode === TAB_ENTER) {
     addTask();
     }
-  };
-  
-  const checkAllNoActive = () => {
-    todoList.length === 0 ? checkAll.disabled : !checkAll.disabled;
   };
   
   const checkDone = async (event) => {
@@ -281,7 +283,6 @@
           const todoItem = todoList.find((item) => item.id === Number(todoId));
           const text = validation(elementContent.value)
           if(text && todoItem.text !== text){            
-            console.log(todoItem.text, text )
             todoItem.text = text;
             await updateTask(todoItem)
             taskRender();
@@ -331,5 +332,3 @@
   window.addEventListener('load', getAllTodo)
 
 })();
-
-
