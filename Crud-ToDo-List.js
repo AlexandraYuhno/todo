@@ -23,7 +23,6 @@
     setTimeout(() =>{modalWindow.style.display = "none"}, 3000)
   }
 
-
   const getAllTodo = () => { 
     fetch(URL)
     .then(res => {
@@ -220,11 +219,6 @@
     const pagesTotal = Math.ceil(todoList.length / ITEMS_PAGE);
     current_page = pagesTotal;
   };
-  
-  const checkAllNoActive = () => {
-    todoList.length === 0 ? checkAll.disabled = true : checkAll.disabled = false;
-
-  };
 
   const taskRender = () => {
     let newTodoList = getList();
@@ -243,7 +237,6 @@
       </li>`;
     });
     taskList.innerHTML = taskHTML;
-    newInput.value = '';
     checkAllNoActive();
     changeAllCheck();
     btnFilterRender();
@@ -259,6 +252,7 @@
       isCompleted: false,
     }; 
     tab = 'all';
+    newInput.value = '';
     createTask(newTodo);
     }
   };
@@ -280,12 +274,17 @@
   const checkDone = async (event) => {
     const activeTaskId = event.target.closest('.todo__task').getAttribute('data-id');
     const taskClick = todoList.find((item) => item.id === Number(activeTaskId));
-    await updateTask(taskClick)
     taskClick.isCompleted = !taskClick.isCompleted;
+    await updateTask(taskClick)
     switchFilterBtn();
     taskRender();
   };
   
+  const checkAllNoActive = () => {
+    todoList.length === 0 ? checkAll.disabled = true : checkAll.disabled = false;
+
+  };
+
   const changeAllCheck = () => {
     checkAll.checked = todoList.length && todoList.every((item) => item.isCompleted); 
   };
@@ -332,7 +331,6 @@
           const todoId = element.getAttribute('data-id');
           const todoItem = todoList.find((item) => item.id === Number(todoId));
           elementContent.value = todoItem.text;
-          await updateTask(todoItem)
           taskRender();
         }
       }
@@ -370,5 +368,3 @@
   window.addEventListener('load', getAllTodo)
 
 })();
-
-
