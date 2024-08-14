@@ -1,4 +1,3 @@
-
 (() => {
   const newInput = document.getElementById('newInput');
   const btnAdd = document.getElementById('btnAdd');
@@ -21,9 +20,14 @@
   }
 
   const getAllTodo = () => { 
-    fetch(URL, { method: 'GET',
+    fetch(URL, 
+      { method: 'GET' })
+    .then(res => {
+      if(!res.ok) {
+        return  new Error('Error getting task list')
+       }
+      else { return res.json() }
     })
-    .then(res => res.json())
     .then(data => {
       todoList = data
       taskRender()
@@ -32,13 +36,19 @@
   }
   
   const createTask = (data) => { 
-    fetch(URL, { method: 'POST',
-      headers: {
-      'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    })
-    .then((res) => res.json())
+    fetch(URL, 
+      { method: 'POST',
+        headers: {
+        'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      })
+      .then(res => {
+        if(!res.ok) {
+          return  new Error('Error creating task')
+         }
+        else { return res.json() }
+      })
     .then(result => {
       todoList.push(result);
       activePage();
@@ -49,8 +59,14 @@
   
   const deleteCompletedTasks = async () => {
     if(todoList.length !== 0){
-      await fetch(`${URL}/completed`, {
-      method: 'DELETE',
+      await fetch(`${URL}/completed`, 
+        { method: 'DELETE' }
+      )
+      .then(res => {
+        if(!res.ok) {
+          return  new Error('Completed tasks are not deleted')
+         }
+        else { return res.json() }
       })
       .then(() => {
         todoList = todoList.filter((item) => !item.isCompleted)
@@ -62,8 +78,14 @@
   };
   
   const deleteTaskId = async (id) => {
-    await fetch(`${URL}/${id}`, {
-      method: 'DELETE',
+    await fetch(`${URL}/${id}`, 
+      { method: 'DELETE' }
+    )
+    .then(res => {
+      if(!res.ok) {
+        throw  new Error('Completed tasks are not deleted')
+       }
+       return res.json() 
     })
     .then(() => {
       todoList = todoList.filter((item) => Number(id) !== item.id);
@@ -75,14 +97,19 @@
   };
 
   const updateTask = async (item) => {
-    await fetch(`${URL}/${item.id}`, {
-    method: 'PATCH',
-    body: JSON.stringify(item),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })
-  .then((res) => res.json())
+    await fetch(`${URL}/${item.id}`, 
+      { method: 'PATCH',
+      body: JSON.stringify(item),
+      headers: {
+        'Content-Type': 'application/json',
+        },
+      })
+    .then(res => {
+      if(!res.ok) {
+        throw  new Error('Task update error')
+      }
+      else { return res.json() }
+    })
   .then(res => {
     todoList = todoList.map((item) => {
      return item.id === res.id ? res : item;
@@ -93,13 +120,19 @@
 
   const checkAllTasks = async (event) => {
     if(todoList.length !== 0){
-      await fetch(URL, {
-      method: 'PATCH',
-      body: JSON.stringify(),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
+      await fetch(URL, 
+        { method: 'PATCH',
+        body: JSON.stringify(),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      .then(res => {
+        if(!res.ok) {
+          return  new Error('Error updating status of all tasks')
+         }
+        else { return res.json() }
+      })
       .then(() => {
       todoList.forEach((item) => item.isCompleted = event.target.checked);
       switchFilterBtn(); 
@@ -185,7 +218,8 @@
   };
   
   const checkAllNoActive = () => {
-    todoList.length === 0 ? checkAll.disabled : !checkAll.disabled;
+    todoList.length === 0 ? checkAll.disabled = true : checkAll.disabled = false;
+
   };
 
   const taskRender = () => {
@@ -332,3 +366,5 @@
   window.addEventListener('load', getAllTodo)
 
 })();
+
+
