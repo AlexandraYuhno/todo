@@ -1,3 +1,4 @@
+
 (() => {
   const newInput = document.getElementById('newInput');
   const btnAdd = document.getElementById('btnAdd');
@@ -6,33 +7,36 @@
   const checkAll = document.getElementById('checkAll');
   const todoShow = document.getElementById('todoShow');
   const todoPaganation = document.getElementById('todoPaganation');
+  const modalWindow = document.getElementById('modal');
   
   let tab = 'all';
   const ITEMS_PAGE = 5;
   let current_page = 1; 
   const TAB_ENTER = 13;
-  const URL = 'http://localhost:3001/tasks';
+  const URL = 'https://api.t2.academy.dunice-testing.com/tasks';
   
   let todoList = [];
-  
-  function alertError(error) {
-    alert(error.message);
+
+  function openModal(message) {
+    modalWindow.childNodes[1].textContent = message;
+    modalWindow.style.display = 'block';
+    setTimeout(() =>{modalWindow.style.display = "none"}, 3000)
   }
 
+
   const getAllTodo = () => { 
-    fetch(URL, 
-      { method: 'GET' })
+    fetch(URL)
     .then(res => {
       if(!res.ok) {
         return  new Error('Error getting task list')
-       }
-      else { return res.json() }
+      }
+      return res.json()
     })
     .then(data => {
       todoList = data
       taskRender()
     })
-    .catch((error) => alertError(error))
+    .catch((error) => openModal(error.message))
   }
   
   const createTask = (data) => { 
@@ -47,14 +51,14 @@
         if(!res.ok) {
           return  new Error('Error creating task')
          }
-        else { return res.json() }
+        return res.json()
       })
     .then(result => {
       todoList.push(result);
       activePage();
       taskRender();
     })
-    .catch((error) => alertError(error))
+    .catch((error) => openModal(error.message))
   };
   
   const deleteCompletedTasks = async () => {
@@ -66,14 +70,14 @@
         if(!res.ok) {
           return  new Error('Completed tasks are not deleted')
          }
-        else { return res.json() }
+        return res.json()
       })
       .then(() => {
         todoList = todoList.filter((item) => !item.isCompleted)
         switchFilterBtn();
         taskRender();
       })
-      .catch((error) => alertError(error))
+      .catch((error) => openModal(error.message))
     }
   };
   
@@ -93,7 +97,7 @@
       switchFilterBtn();
       taskRender();
     })
-    .catch((error) => alertError(error))
+    .catch((error) => openModal(error.message))
   };
 
   const updateTask = async (item) => {
@@ -108,14 +112,14 @@
       if(!res.ok) {
         throw  new Error('Task update error')
       }
-      else { return res.json() }
+      return res.json()
     })
   .then(res => {
     todoList = todoList.map((item) => {
      return item.id === res.id ? res : item;
     });
   })   
-  .catch((error) => alertError(error))
+  .catch((error) => openModal(error.message))
   }
 
   const checkAllTasks = async (event) => {
@@ -131,14 +135,14 @@
         if(!res.ok) {
           return  new Error('Error updating status of all tasks')
          }
-        else { return res.json() }
+        return res.json()
       })
       .then(() => {
       todoList.forEach((item) => item.isCompleted = event.target.checked);
       switchFilterBtn(); 
       taskRender();
       })
-      .catch((error) => alertError(error))
+      .catch((error) => openModal(error.message))
     }
   }
   
@@ -276,8 +280,8 @@
   const checkDone = async (event) => {
     const activeTaskId = event.target.closest('.todo__task').getAttribute('data-id');
     const taskClick = todoList.find((item) => item.id === Number(activeTaskId));
-    taskClick.isCompleted = !taskClick.isCompleted;
     await updateTask(taskClick)
+    taskClick.isCompleted = !taskClick.isCompleted;
     switchFilterBtn();
     taskRender();
   };
