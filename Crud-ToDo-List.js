@@ -90,19 +90,21 @@
   }
 
   const checkAllTasks = async (event) => {
-  await fetch(URL, {
-    method: 'PATCH',
-    body: JSON.stringify(),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })
-  .then(() => {
-    todoList.forEach((item) => item.isCompleted = event.target.checked);
-    switchFilterBtn(); 
-    taskRender();
-  })
-  .catch((error) => alertError(error))
+    if(todoList.length !== 0){
+      await fetch(URL, {
+      method: 'PATCH',
+      body: JSON.stringify(),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(() => {
+      todoList.forEach((item) => item.isCompleted = event.target.checked);
+      switchFilterBtn(); 
+      taskRender();
+      })
+      .catch((error) => alertError(error))
+    }
   }
   
   const sumTodo = () => {
@@ -264,7 +266,6 @@
   };
   
   const switchDblClick = (event) => {
-    console.log("3")
     const element = event.target.closest('.todo__task');
     element.childNodes[3].hidden = false;
     element.childNodes[5].hidden = true;
@@ -279,17 +280,19 @@
           const todoId = element.getAttribute('data-id');
           const todoItem = todoList.find((item) => item.id === Number(todoId));
           const text = validation(elementContent.value)
-          if(text){
+          if(text && todoItem.text !== text){            
+            console.log(todoItem.text, text )
             todoItem.text = text;
-            console.log("1")
             await updateTask(todoItem)
             taskRender();
-          };
+          } else {
+            elementContent.value = todoItem.text;
+            taskRender();
+          }
         } else if (event.keyCode === 27) {
           const todoId = element.getAttribute('data-id');
           const todoItem = todoList.find((item) => item.id === Number(todoId));
           elementContent.value = todoItem.text;
-          console.log("2")
           await updateTask(todoItem)
           taskRender();
         }
@@ -304,12 +307,14 @@
       const todoId = event.target.closest('.todo__task').getAttribute('data-id');
       const todoItem = todoList.find((item) => item.id === Number(todoId));
       const text = validation(inputSave.value)
-      if(text){
+      if(text && todoItem.text !== text){
         todoItem.text = text;
-        console.log("3")
         await updateTask(todoItem)
         taskRender();
-      };
+      } else {
+        inputSave.value = todoItem.text;
+        taskRender();
+      }
     }
   };
   
@@ -326,3 +331,5 @@
   window.addEventListener('load', getAllTodo)
 
 })();
+
+
