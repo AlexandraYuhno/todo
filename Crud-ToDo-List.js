@@ -48,7 +48,7 @@
   };
   
   const deleteCompletedTasks = async () => {
-     await fetch('http://127.0.0.1:3001/tasks/completed', {
+     await fetch(`${URL}/completed`, {
       method: 'DELETE',
     })
     .then(() => {
@@ -235,12 +235,6 @@
     todoList.length === 0 ? checkAll.disabled : !checkAll.disabled;
   };
   
- /* const checkAllTodo = (event) => {
-    todoList.forEach((item) => item.isCompleted = event.target.checked);
-    switchFilterBtn(); 
-    taskRender();
-  };*/
-  
   const checkDone = async (event) => {
     const activeTaskId = event.target.closest('.todo__task').getAttribute('data-id');
     const taskClick = todoList.find((item) => item.id === Number(activeTaskId));
@@ -257,17 +251,7 @@
   const deleteTask = (event) => {
     const activeTaskId = event.target.closest('.todo__task').getAttribute('data-id');
     deleteTaskId(activeTaskId)
-    // todoList = todoList.filter((item) => Number(activeTaskId) !== item.id);
-    // activePage();
-    // switchFilterBtn();
-    // taskRender();
   };
-  
-  /*const delAll = () => {
-    todoList = todoList.filter((item) => !item.isCompleted)
-    switchFilterBtn();
-    taskRender();
-  };*/
   
   const switchClick = (event) => {
     const element = event.target.closest('.todo__task');
@@ -280,6 +264,7 @@
   };
   
   const switchDblClick = (event) => {
+    console.log("3")
     const element = event.target.closest('.todo__task');
     element.childNodes[3].hidden = false;
     element.childNodes[5].hidden = true;
@@ -315,7 +300,7 @@
     const inputSave = event.target.closest('.todo__task').childNodes[3];
     if(!inputSave.value){
       taskRender()
-    } else if (event.target === inputSave) {
+    } else if (event.target === inputSave && event.sourceCapabilities) {
       const todoId = event.target.closest('.todo__task').getAttribute('data-id');
       const todoItem = todoList.find((item) => item.id === Number(todoId));
       const text = validation(inputSave.value)
