@@ -112,7 +112,8 @@
       return res.json()
     })
     .then((res) => {
-       todoList = todoList.map((item) =>  item.id === res.id ? res : item )
+      console.log(res)
+      todoList = todoList.map((item) =>  item.id === res.id ? res : item )
     switchFilterBtn();
     taskRender();
   })   
@@ -255,7 +256,7 @@
   };
   
   const addTask = () => {
-    const text = validation(newInput.value)
+    const text = newInput.value;
     if(text){
       let newTodo = {
       text: text,
@@ -282,9 +283,8 @@
   
   const checkDone = async (event) => {
     const activeTaskId = event.target.closest('.todo__task').getAttribute('data-id');
-    //const taskClick = todoList.find((item) => item.id === Number(activeTaskId));
     const taskCheckBox = event.target.closest('.todo__task').childNodes[1].childNodes[1];
-    await updateTask(Number(activeTaskId), {isCompleted:taskCheckBox.checked})
+    await updateTask(Number(activeTaskId), {isCompleted:taskCheckBox.checked});
   };
   
   const checkAllNoActive = () => {
@@ -302,6 +302,7 @@
   };
   
   const switchClick = (event) => {
+    event.preventDefault()
     const element = event.target.closest('.todo__task');
     const liLabel = element.childNodes[1];
     if (event.target === liLabel.childNodes[1]) {
@@ -327,8 +328,8 @@
           const todoItem = todoList.find((item) => item.id === Number(todoId));
           const text = validation(elementContent.value)
           if(text && todoItem.text !== text){            
-            todoItem.text = text;
             await updateTask(Number(todoId), {text:elementContent.value})
+            todoItem.text = text;
             taskRender();
           } else {
             elementContent.value = todoItem.text;
@@ -352,8 +353,8 @@
       const todoItem = todoList.find((item) => item.id === Number(todoId));
       const text = validation(inputSave.value)
       if(text && todoItem.text !== text){
-        todoItem.text = text;
         await updateTask(Number(todoId), {text:inputSave.value})
+        todoItem.text = text;
         taskRender();
       } else {
         inputSave.value = todoItem.text;
