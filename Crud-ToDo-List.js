@@ -13,7 +13,7 @@
   const ITEMS_PAGE = 5;
   let current_page = 1; 
   const TAB_ENTER = 13;
-  const URL = 'https://api.t2.academy.dunice-testing.com/tasks';
+  const URL = 'http://127.0.0.1:3001/tasks';
   
   let todoList = [];
 
@@ -61,23 +61,21 @@
   };
   
   const deleteCompletedTasks = async () => {
-    if(todoList.length !== 0){
-      await fetch(`${URL}/completed`, 
-        { method: 'DELETE' }
-      )
-      .then(res => {
-        if(!res.ok) {
-          return  new Error('Completed tasks are not deleted')
-         }
-        return res.json()
-      })
-      .then(() => {
-        todoList = todoList.filter((item) => !item.isCompleted)
-        switchFilterBtn();
-        taskRender();
-      })
-      .catch((error) => openModal(error.message))
+    await fetch(`${URL}/completed`, 
+      { method: 'DELETE' }
+    )
+    .then(res => {
+      if(!res.ok) {
+      return  new Error('Completed tasks are not deleted')
     }
+      return res.json()
+    })
+    .then(() => {
+      todoList = todoList.filter((item) => !item.isCompleted)
+      switchFilterBtn();
+      taskRender();
+    })
+    .catch((error) => openModal(error.message))
   };
   
   const deleteTaskId = async (id) => {
@@ -92,15 +90,15 @@
     })
     .then(() => {
       todoList = todoList.filter((item) => Number(id) !== item.id);
-      activePage();
       switchFilterBtn();
       taskRender();
     })
     .catch((error) => openModal(error.message))
   };
 
-  const updateTask = async (item) => {
-    await fetch(`${URL}/${item.id}`, 
+  const updateTask = async (id, item) => {
+    console.log(item)
+    await fetch(`${URL}/${id}`, 
       { method: 'PATCH',
       body: JSON.stringify(item),
       headers: {
@@ -113,10 +111,10 @@
       }
       return res.json()
     })
-  .then(res => {
-    todoList = todoList.map((item) => {
-     return item.id === res.id ? res : item;
-    });
+    .then((res) => {
+       todoList = todoList.map((item) =>  item.id === res.id ? res : item )
+    switchFilterBtn();
+    taskRender();
   })   
   .catch((error) => openModal(error.message))
   }
@@ -125,7 +123,9 @@
     if(todoList.length !== 0){
       await fetch(URL, 
         { method: 'PATCH',
-        body: JSON.stringify(),
+        body: JSON.stringify({
+          isCompleted: event,
+        }),
         headers: {
           'Content-Type': 'application/json',
         },
@@ -137,13 +137,19 @@
         return res.json()
       })
       .then(() => {
-      todoList.forEach((item) => item.isCompleted = event.target.checked);
+      todoList.forEach((item) => item.isCompleted = event);
       switchFilterBtn(); 
       taskRender();
       })
       .catch((error) => openModal(error.message))
     }
   }
+
+  const checkAllTodo = (event) => {
+    const checkAll = event.target.checked;
+    checkAllTasks(checkAll)
+    event.target.checked = !event.target.checked;
+  };
   
   const sumTodo = () => {
     const countTodo = todoList.length;
@@ -193,6 +199,10 @@
     const itemsStart = (current_page - 1) * ITEMS_PAGE;
     const itemsEnd = itemsStart + ITEMS_PAGE;
     const pagTodoList = newTodoList.slice(itemsStart, itemsEnd); 
+    const pagesTotal = Math.ceil(newTodoList.length / ITEMS_PAGE);
+    if(pagTodoList.length < 1 ){
+      current_page = pagesTotal; 
+    }
     return pagTodoList;
   };
   
@@ -217,7 +227,7 @@
   
   const activePage = () => {
     const pagesTotal = Math.ceil(todoList.length / ITEMS_PAGE);
-    current_page = pagesTotal;
+      current_page = pagesTotal; 
   };
 
   const taskRender = () => {
@@ -231,8 +241,8 @@
       <input data-active='checkbox' type='checkbox' class='checkbox form-check-input'
       ${item.isCompleted ? 'checked' : '' }>
       </label >
-      <input value='${item.text}' class='editText' hidden maxlength='255'>
-      <div class='todo__task-title'>${item.text}</div>
+      <input value='${validation(item.text)}' class='editText' hidden maxlength='255'>
+      <div class='todo__task-title'>${validation(item.text)}</div>
       <div class='todo__task-del btn-close'></div>
       </li>`;
     });
@@ -249,7 +259,6 @@
     if(text){
       let newTodo = {
       text: text,
-      isCompleted: false,
     }; 
     tab = 'all';
     newInput.value = '';
@@ -273,11 +282,9 @@
   
   const checkDone = async (event) => {
     const activeTaskId = event.target.closest('.todo__task').getAttribute('data-id');
-    const taskClick = todoList.find((item) => item.id === Number(activeTaskId));
-    taskClick.isCompleted = !taskClick.isCompleted;
-    await updateTask(taskClick)
-    switchFilterBtn();
-    taskRender();
+    //const taskClick = todoList.find((item) => item.id === Number(activeTaskId));
+    const taskCheckBox = event.target.closest('.todo__task').childNodes[1].childNodes[1];
+    await updateTask(Number(activeTaskId), {isCompleted:taskCheckBox.checked})
   };
   
   const checkAllNoActive = () => {
@@ -321,7 +328,7 @@
           const text = validation(elementContent.value)
           if(text && todoItem.text !== text){            
             todoItem.text = text;
-            await updateTask(todoItem)
+            await updateTask(Number(todoId), {text:elementContent.value})
             taskRender();
           } else {
             elementContent.value = todoItem.text;
@@ -346,7 +353,7 @@
       const text = validation(inputSave.value)
       if(text && todoItem.text !== text){
         todoItem.text = text;
-        await updateTask(todoItem)
+        await updateTask(Number(todoId), {text:inputSave.value})
         taskRender();
       } else {
         inputSave.value = todoItem.text;
@@ -362,7 +369,7 @@
   newInput.addEventListener('keydown', addByEnter);
   btnAdd.addEventListener('click', addTask);
   btnDelAll.addEventListener('click', deleteCompletedTasks);
-  checkAll.addEventListener('click', checkAllTasks);
+  checkAll.addEventListener('click', checkAllTodo);
   todoShow.addEventListener('click', taskVisible);
   todoPaganation.addEventListener('click', crossPage);
   window.addEventListener('load', getAllTodo)
