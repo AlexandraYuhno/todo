@@ -13,7 +13,7 @@
   const ITEMS_PAGE = 5;
   let current_page = 1; 
   const TAB_ENTER = 13;
-  const URL = 'http://127.0.0.1:3001/tasks';
+  const URL = 'https://api.t2.academy.dunice-testing.com/tasks';
   
   let todoList = [];
 
@@ -97,7 +97,6 @@
   };
 
   const updateTask = async (id, item) => {
-    console.log(item)
     await fetch(`${URL}/${id}`, 
       { method: 'PATCH',
       body: JSON.stringify(item),
@@ -112,7 +111,6 @@
       return res.json()
     })
     .then((res) => {
-      console.log(res)
       todoList = todoList.map((item) =>  item.id === res.id ? res : item )
     switchFilterBtn();
     taskRender();
