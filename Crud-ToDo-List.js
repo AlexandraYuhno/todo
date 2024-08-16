@@ -13,7 +13,7 @@
   const ITEMS_PAGE = 5;
   let current_page = 1; 
   const TAB_ENTER = 13;
-  const URL = 'https://api.t2.academy.dunice-testing.com/tasks';
+  const URL = 'http://localhost:3001/tasks';
   
   let todoList = [];
 
@@ -168,9 +168,11 @@
   const switchFilterBtn = () => {
     const countTodoActive = todoList.filter((item) => !item.isCompleted).length;
     const countTodoCompleted = todoList.length - countTodoActive;
-    if(countTodoActive === 0 || countTodoCompleted === 0){
-    tab = 'all'
-  } 
+    if(countTodoCompleted === 0) {
+      tab = 'all'
+    } else if (countTodoActive === 0){
+      tab = 'completed'
+    }
     taskRender()
   };
   
@@ -254,7 +256,7 @@
   };
   
   const addTask = () => {
-    const text = newInput.value;
+    const text = newInput.value.replace(/ {2,}/g, ' ').trim();
     if(text){
       let newTodo = {
       text: text,
