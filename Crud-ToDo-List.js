@@ -13,7 +13,7 @@
   const ITEMS_PAGE = 5;
   let current_page = 1; 
   const TAB_ENTER = 13;
-  const URL = 'http://localhost:3001/tasks';
+  const URL = 'http://127.0.0.1:3001/tasks';
   
   let todoList = [];
 
@@ -86,6 +86,7 @@
       if(!res.ok) {
         throw  new Error('Completed tasks are not deleted')
        }
+       
        return res.json() 
     })
     .then(() => {
